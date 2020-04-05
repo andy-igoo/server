@@ -1,0 +1,18 @@
+# 2020-04-04 Dmitry Fedyuk https://www.upwork.com/fl/mage2pro
+SHELL=/bin/sh
+PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
+17 *	* * *	root    cd / && run-parts --report /etc/cron.hourly
+25 6	* * *	root	test -x /usr/sbin/anacron || ( cd / && run-parts --report /etc/cron.daily )
+47 6	* * 7	root	test -x /usr/sbin/anacron || ( cd / && run-parts --report /etc/cron.weekly )
+52 6	1 * *	root	test -x /usr/sbin/anacron || ( cd / && run-parts --report /etc/cron.monthly )
+
+* * * * * www-data php /var/www/magento/bin/magento cron:run 2>&1 | grep -v "Ran jobs by schedule" >> /var/www/magento/var/log/magento.cron.log
+* * * * * www-data php /var/www/magento/update/cron.php >> /var/www/magento/var/log/update.cron.log
+* * * * * www-data php /var/www/magento/bin/magento setup:cron:run >> /var/www/magento/var/log/setup.cron.log
+
+# 2020-04-04 Dmitry Fedyuk https://www.upwork.com/fl/mage2pro
+# Let's Encrypt certificates update: https://serverfault.com/a/790776
+@daily www-data sudo certbot renew && sudo service nginx restart
+
+# 2020-04-04 Dmitry Fedyuk https://www.upwork.com/fl/mage2pro
+# A crontab should contain a newline at the end: https://serverfault.com/a/230407

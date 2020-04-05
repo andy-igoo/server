@@ -1,0 +1,1 @@
+[vegandthecity.ch](https://vegandthecity.ch) server settings.
