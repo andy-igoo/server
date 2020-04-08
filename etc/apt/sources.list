@@ -28,3 +28,7 @@ deb https://packages.sury.org/php/ buster main
 
 # 2020-04-07 https://github.com/rabbitmq/erlang-debian-package/tree/53ea1f78#source-list-file
 deb https://dl.bintray.com/rabbitmq-erlang/debian buster erlang
+
+# 2020-04-08 Dmitry Fedyuk https://www.upwork.com/fl/mage2pro
+# "How did I install Elasticsearch 6.8 for Magento 2.3 to Debian 10?": https://df.tips/t/1008
+deb https://artifacts.elastic.co/packages/6.x/apt stable main
