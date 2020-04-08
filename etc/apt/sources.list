@@ -25,3 +25,6 @@ deb http://ftp.debian.org/debian buster-backports main
 # 		aptitude install apt-transport-https
 # https://askubuntu.com/a/517693
 deb https://packages.sury.org/php/ buster main
+
+# 2020-04-07 https://github.com/rabbitmq/erlang-debian-package/tree/53ea1f78#source-list-file
+deb https://dl.bintray.com/rabbitmq-erlang/debian buster erlang
