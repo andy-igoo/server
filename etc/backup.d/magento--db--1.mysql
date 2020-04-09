@@ -1,0 +1,9 @@
+# 2020-04-09 Dmitry Fedyuk https://www.upwork.com/fl/mage2pro
+backupdir = /var/backup
+# 2015-05-01 Переложил сжатие на duplicity, потому что не уверен, что иначе duplicity эффективно будет делать incremental.
+compress = no
+databases = magento
+nodata = magento.cron_schedule magento.customer_log magento.customer_visitor magento.mst_cache_warmer_page magento.report_compared_product_index magento.report_event magento.report_viewed_product_aggregated_daily magento.report_viewed_product_aggregated_monthly magento.report_viewed_product_aggregated_yearly magento.report_viewed_product_index magento.session
+sqldump = yes
+sqldumpoptions = --single-transaction --complete-insert --add-drop-database --add-drop-table --quote-names
+when = hourly
