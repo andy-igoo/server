@@ -1,5 +1,5 @@
 /_my
 /etc/mysql
 # 2020-04-09 "Setup a backup solution using Backupninja and Duplicity": https://github.com/vegandthecity/server/issues/9
-/root/.ssh/id_rsa
+/root/.ssh/private-key
 /var/www/pma
