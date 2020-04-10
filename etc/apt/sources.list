@@ -17,6 +17,7 @@ deb http://ftp.us.debian.org/debian buster-proposed-updates main contrib non-fre
 # Now it is used to install Certbot too.
 # I use Certbot to install and automatically update my Let's Encrypt certificates.
 # https://www.digitalocean.com/community/tutorials/how-to-secure-nginx-with-let-s-encrypt-on-debian-8#step-1-install-certbot-the-let-39-s-encrypt-client
+# 2020-04-10 "Upgrade `python-paramiko` from 2.4.2 to ≥ 2.5": https://github.com/vegandthecity/server/issues/11
 deb http://ftp.debian.org/debian buster-backports main
 
 # 2017-04-29 For PHP 7.1: https://mage2.pro/t/2428
