@@ -5,8 +5,8 @@ backupdir = /var/backup
 # because I do not believe Duplicity will efficiently do incremental backups of already compressed files.
 # https://0xacab.org/riseuplabs/backupninja/-/blob/backupninja_debian/1.1.0-1/examples/example.mysql#L80
 compress = no
-databases = magento
-nodata = magento.cron_schedule magento.customer_log magento.customer_visitor magento.mst_cache_warmer_page magento.report_compared_product_index magento.report_event magento.report_viewed_product_aggregated_daily magento.report_viewed_product_aggregated_monthly magento.report_viewed_product_aggregated_yearly magento.report_viewed_product_index magento.session
+databases = joomla
+nodata = joomlapd05w_redj_referers joomla.pd05w_redj_visited_urls joomla.pd05w_redj_errors joomla.pd05w_redj_referer_urls
 sqldump = yes
 sqldumpoptions = --single-transaction --complete-insert --add-drop-database --add-drop-table --quote-names
 when = hourly

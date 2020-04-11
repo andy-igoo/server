@@ -1,0 +1,61 @@
+options = --allow-source-mismatch --no-encryption --asynchronous-upload --volsize 2000 --archive-dir /var/backup/archive --name magento/files
+testconnect = no
+when = everyday at 04:45
+when = everyday at 10:45
+when = everyday at 16:45
+when = everyday at 22:45
+
+[gpg]
+# 2015-05-01, 2020-04-10
+# The option is unused because of the `--no-encryption` parameter of the `options` option above,
+# but it should have a value, otherwise Backupninja will fail with the «The password option must be set» error.
+password = not-used
+
+[source]
+include = /var/www/magento
+exclude = /var/www/magento/.github
+exclude = /var/www/magento/dev
+exclude = /var/www/magento/generated
+include = /var/www/magento/generated/.htaccess
+exclude = /var/www/magento/var/*
+include = /var/www/magento/var/.htaccess
+exclude = /var/www/magento/pub/media/cache
+exclude = /var/www/magento/pub/media/captcha
+exclude = /var/www/magento/pub/media/catalog/product/cache
+exclude = /var/www/magento/pub/media/import
+exclude = /var/www/magento/pub/media/tmp/catalog/product
+exclude = /var/www/magento/pub/static
+include = /var/www/magento/pub/static/.htaccess
+
+[dest]
+destdir = /backup/magento/files
+desthost = 10.33.2.41
+destuser = root
+incremental = yes
+# 2015-05-01
+# Интервал в днях между созданием полных резервных копий.
+# Значение «keep» означает, что повторные полные резервные копии не делаются, а делаются только инкрементные.
+# 2020-04-10
+# «How many days of incremental backups before doing a full backup again;
+# default is 30 days (one can also use the time format of duplicity).
+# if increments = keep, never automatically perform a new full backup;
+# only perform incremental backups.»
+# https://0xacab.org/riseuplabs/backupninja/-/blob/backupninja_debian/1.1.0-1/examples/example.dup#L167
+increments = 30
+# 2015-05-01
+# Срок хранения резервных копий (в днях). Значение «yes» означает, что прежние резервные копии удалять не надо.
+# 2018-11-04 «1095» means «3 years».
+# 2020-04-10
+# «How many days of data to keep ; default is 60 days.
+# (you can also use the time format of duplicity)
+# 'keep = yes' means : do not delete old data, the remote host will take care of this»
+# https://0xacab.org/riseuplabs/backupninja/-/blob/backupninja_debian/1.1.0-1/examples/example.dup#L174
+keep = 1095
+# 2015-05-01
+# Количество полных резервных копий, для которых будут сохраняться дополнения.
+# Для более старых полных резервных копий дополнения будут удаляться.
+# 2020-04-10
+# «For how many full backups do we keep their later increments. Default is all (keep all increments).
+# Increments for older full backups will be deleted: only the more recent ones (count provided) will be kept.»
+# https://0xacab.org/riseuplabs/backupninja/-/blob/backupninja_debian/1.1.0-1/examples/example.dup#L182
+keepincroffulls = 2
