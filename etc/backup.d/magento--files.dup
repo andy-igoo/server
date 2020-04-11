@@ -1,5 +1,9 @@
 options = --allow-source-mismatch --no-encryption --asynchronous-upload --volsize 2000 --archive-dir /var/backup/archive --name magento/files
 testconnect = no
+#when = 30 at 04:45
+# 2020-04-11
+# "Backupninja is unable to finish lengthy tasks / Duplicity utilizes CPU for hours while processing a large file"
+# https://github.com/vegandthecity/server/issues/12
 when = everyday at 04:45
 when = everyday at 10:45
 when = everyday at 16:45
@@ -15,17 +19,14 @@ password = not-used
 include = /var/www/magento
 exclude = /var/www/magento/.github
 exclude = /var/www/magento/dev
-exclude = /var/www/magento/generated
-include = /var/www/magento/generated/.htaccess
-exclude = /var/www/magento/var/*
-include = /var/www/magento/var/.htaccess
+exclude = /var/www/magento/generated # 2020-04-11 I use `/*` to include `/.htaccess`
 exclude = /var/www/magento/pub/media/cache
 exclude = /var/www/magento/pub/media/captcha
 exclude = /var/www/magento/pub/media/catalog/product/cache
 exclude = /var/www/magento/pub/media/import
 exclude = /var/www/magento/pub/media/tmp/catalog/product
-exclude = /var/www/magento/pub/static
-include = /var/www/magento/pub/static/.htaccess
+exclude = /var/www/magento/pub/static # 2020-04-11 I use `/*` to include `/.htaccess`
+exclude = /var/www/magento/var/* # 2020-04-11 I use `/*` to include `/.htaccess`
 
 [dest]
 destdir = /backup/magento/files
