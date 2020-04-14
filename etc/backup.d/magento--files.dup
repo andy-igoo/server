@@ -19,14 +19,26 @@ password = not-used
 include = /var/www/magento
 exclude = /var/www/magento/.github
 exclude = /var/www/magento/dev
-exclude = /var/www/magento/generated # 2020-04-11 I use `/*` to include `/.htaccess`
+# 2020-04-11 I use `/*` to include `/.htaccess`
+# 2020-04-14
+# "Backupninja does not handle correctly inline comments, so comments should be placed on separate lines"
+# https://github.com/vegandthecity/server/issues/13
+exclude = /var/www/magento/generated
 exclude = /var/www/magento/pub/media/cache
 exclude = /var/www/magento/pub/media/captcha
 exclude = /var/www/magento/pub/media/catalog/product/cache
 exclude = /var/www/magento/pub/media/import
 exclude = /var/www/magento/pub/media/tmp/catalog/product
-exclude = /var/www/magento/pub/static # 2020-04-11 I use `/*` to include `/.htaccess`
-exclude = /var/www/magento/var/* # 2020-04-11 I use `/*` to include `/.htaccess`
+# 2020-04-11 I use `/*` to include `/.htaccess`
+# 2020-04-14
+# "Backupninja does not handle correctly inline comments, so comments should be placed on separate lines"
+# https://github.com/vegandthecity/server/issues/13
+exclude = /var/www/magento/pub/static/*
+# 2020-04-11 I use `/*` to include `/.htaccess`
+# 2020-04-14
+# "Backupninja does not handle correctly inline comments, so comments should be placed on separate lines"
+# https://github.com/vegandthecity/server/issues/13
+exclude = /var/www/magento/var/*
 
 [dest]
 destdir = /backup/magento/files
