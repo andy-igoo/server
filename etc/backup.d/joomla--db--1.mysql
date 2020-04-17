@@ -6,7 +6,7 @@ backupdir = /var/backup
 # https://0xacab.org/riseuplabs/backupninja/-/blob/backupninja_debian/1.1.0-1/examples/example.mysql#L80
 compress = no
 databases = joomla
-nodata = joomlapd05w_redj_referers joomla.pd05w_redj_visited_urls joomla.pd05w_redj_errors joomla.pd05w_redj_referer_urls
+nodata = joomla.pd05w_redj_referers joomla.pd05w_redj_visited_urls joomla.pd05w_redj_errors joomla.pd05w_redj_referer_urls
 sqldump = yes
 sqldumpoptions = --single-transaction --complete-insert --add-drop-database --add-drop-table --quote-names
 when = hourly
