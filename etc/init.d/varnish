@@ -127,12 +127,15 @@ case "$1" in
         status_varnishd
         ;;
     restart|force-reload)
-	if status_of_proc -p "${PIDFILE}" "${DAEMON}" "${NAME}" 1>/dev/null; then
-    if ! configtest; then
-		log_failure_msg "Syntax check failed, not restarting"
-		exit 1
-	    fi
-	fi
+# 2020-04-18 Dmitry Fedyuk https://www.upwork.com/fl/mage2pro
+# «Could not get socket :6081: Address already in use» / «Syntax check failed, not restarting»
+# on `service varnish restart`: https://github.com/vegandthecity/server/issues/15
+#	if status_of_proc -p "${PIDFILE}" "${DAEMON}" "${NAME}" 1>/dev/null; then
+#    if ! configtest; then
+#		log_failure_msg "Syntax check failed, not restarting"
+#		exit 1
+#	    fi
+#	fi
         $0 stop
         $0 start
         ;;
