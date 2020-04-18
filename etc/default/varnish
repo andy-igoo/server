@@ -1,3 +1,8 @@
+#! /bin/sh
+# 2020-04-18 Dmitry Fedyuk https://www.upwork.com/fl/mage2pro
+# "Force IntelliJ IDEA to highlight the syntax of `/etc/default/varnish`":
+# https://github.com/vegandthecity/server/issues/16
+
 # Configuration file for varnish
 #
 # /etc/init.d/varnish expects the variables $DAEMON_OPTS, $NFILES and $MEMLOCK
