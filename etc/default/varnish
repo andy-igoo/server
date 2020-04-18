@@ -2,13 +2,26 @@
 # 2020-04-18 Dmitry Fedyuk https://www.upwork.com/fl/mage2pro
 # "Force IntelliJ IDEA to highlight the syntax of `/etc/default/varnish`":
 # https://github.com/vegandthecity/server/issues/16
-START=yes
-NFILES=131072
-MEMLOCK=82000
+#
+# 2020-04-19 Dmitry Fedyuk https://www.upwork.com/fl/mage2pro
+# «Listen for client requests on the specified address and port.
+# The address can be:
+#     *) a host name ("localhost"),
+#     *) an IPv4 dotted-quad ("127.0.0.1"),
+#     *) an IPv6 address enclosed in square brackets ("[::1]"),
+#     *) a path beginning with a '/' for a Unix domain socket ("/path/to/listen.sock").
+# If address is not specified, `varnishd` will listen on all available IPv4 and IPv6 interfaces.
+# If port is not specified, port 80 (http) is used.
+# At least one of address or port is required.»
+# https://varnish-cache.org/docs/6.4/reference/varnishd.html
+p_a=':6081'
 DAEMON_OPTS="\
-    -a :6081 \
+    -a ${p_a} \
     -f /etc/varnish/default.vcl \
     -S /etc/varnish/secret \
     -s malloc,256m \
     -T localhost:6082 \
 "
+MEMLOCK=82000
+NFILES=131072
+START=yes
