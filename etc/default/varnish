@@ -27,7 +27,7 @@ p_f='/etc/varnish/default.vcl'
 # Name is referenced in logs, VCL, statistics, etc.
 # If name is not specified, "s0", "s1" and so forth is used.»
 # https://varnish-cache.org/docs/6.4/reference/varnishd.html#tuning-options
-# 1) «`malloc` is a memory based backend.»
+# 2) «`malloc` is a memory based backend.»
 # https://varnish-cache.org/docs/6.4/reference/varnishd.html#storage-backend
 p_s='malloc,256m'
 # 2020-04-19 Dmitry Fedyuk https://www.upwork.com/fl/mage2pro
@@ -62,7 +62,7 @@ DAEMON_OPTS="\
     -a ${p_a} \
     -f ${p_f} \
     -S /etc/varnish/secret \
-    -s malloc,256m \
+    -s ${p_s} \
     -T ${p_T} \
     -t ${p_t} \
 "
