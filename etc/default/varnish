@@ -21,6 +21,17 @@ p_a=':6081'
 # https://varnish-cache.org/docs/6.4/reference/varnishd.html
 p_f='/etc/varnish/default.vcl'
 # 2020-04-19 Dmitry Fedyuk https://www.upwork.com/fl/mage2pro
+# «Path to a file containing a secret used for authorizing access to the management port.
+# To disable authentication use `none`.
+# If this argument is not provided,
+# a secret drawn from the system `PRNG` will be written to a file called `_.secret` in the working directory
+# (see `opt_n`: https://varnish-cache.org/docs/6.4/reference/varnishd.html#opt-n)
+# with default ownership and permissions of the user having started varnish.
+# Thus, users wishing to delegate control over varnish will probably want to create a custom secret file
+# with appropriate permissions (ie. readable by a unix group to delegate control to).»
+# https://varnish-cache.org/docs/6.4/reference/varnishd.html#security-options
+p_S='/etc/varnish/secret'
+# 2020-04-19 Dmitry Fedyuk https://www.upwork.com/fl/mage2pro
 # 1) «Use the specified storage backend. See Storage Backend section:
 # https://varnish-cache.org/docs/6.4/reference/varnishd.html#storage-backend
 # This option can be used multiple times to specify multiple storage files.
