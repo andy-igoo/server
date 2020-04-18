@@ -4,21 +4,18 @@ backend default {
 	.host = "127.0.0.1";
 	.port = "8080";
 }
-sub vcl_recv {
-	# Happens before we check if we have this in cache already.
-	#
-	# Typically you clean up the request here, removing cookies you don't need,
-	# rewriting the request, etc.
-}
-sub vcl_backend_response {
-	# Happens after we have read the response headers from the backend.
-	#
-	# Here you clean the response headers, removing silly Set-Cookie headers
-	# and other mistakes your backend does.
-}
-sub vcl_deliver {
-	# Happens when we have all the pieces we need, and are about to send the
-	# response to the client.
-	#
-	# You can do accounting or modifying the final object here.
-}
+sub vcl_backend_response {}
+sub vcl_deliver {}
+# 2020-04-19 Dmitry Fedyuk https://www.upwork.com/fl/mage2pro
+# «Called:
+#	*) at the beginning of a request,
+#	*) after the complete request has been received and parsed,
+# 	*) after a restart
+#	*) as the result of an ESI include.
+# Its purpose is:
+# 	*) to decide whether or not to serve the request,
+#	*) possibly modify it
+#	*) and decide on how to process it further.
+# A backend hint may be set as a default for the backend processing side.»
+# https://varnish-cache.org/docs/6.4/users-guide/vcl-built-in-subs.html#vcl-recv
+sub vcl_recv {}
