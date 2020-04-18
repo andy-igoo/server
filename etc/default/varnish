@@ -15,12 +15,24 @@
 # At least one of address or port is required.»
 # https://varnish-cache.org/docs/6.4/reference/varnishd.html
 p_a=':6081'
+# 2020-04-19 Dmitry Fedyuk https://www.upwork.com/fl/mage2pro
+# «Use the specified VCL configuration file instead of the builtin default.
+# See VCL for details on VCL syntax: https://varnish-cache.org/docs/6.4/reference/vcl.html#vcl-7»
+# https://varnish-cache.org/docs/6.4/reference/varnishd.html
+p_f='/etc/varnish/default.vcl'
+# 2020-04-19 Dmitry Fedyuk https://www.upwork.com/fl/mage2pro
+# «Offer a management interface on the specified address and port.
+# See `varnish-cli` for documentation of the management commands:
+# https://varnish-cache.org/docs/6.4/reference/varnish-cli.html#varnish-cli-7
+# To disable the management interface use `none`.»
+# https://varnish-cache.org/docs/6.4/reference/varnishd.html
+p_T='localhost:6082'
 DAEMON_OPTS="\
     -a ${p_a} \
-    -f /etc/varnish/default.vcl \
+    -f ${p_f} \
     -S /etc/varnish/secret \
     -s malloc,256m \
-    -T localhost:6082 \
+    -T ${p_T} \
 "
 MEMLOCK=82000
 NFILES=131072
