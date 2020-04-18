@@ -30,12 +30,31 @@ p_f='/etc/varnish/default.vcl'
 # https://stackoverflow.com/a/23330233
 # https://varnish-cache.org/docs/6.4/reference/varnishadm.html
 p_T='localhost:6082'
+# 2020-04-19 Dmitry Fedyuk https://www.upwork.com/fl/mage2pro
+# 1) «Specifies the default time to live (TTL) for cached objects.
+# This is a shortcut for specifying the `default_ttl` run-time parameter.»
+# https://varnish-cache.org/docs/6.4/reference/varnishd.html#tuning-options
+# 2)
+# 2.1) «Varnish default TTL is the time for which an object is cached,
+# when no cache information has been sent by your application.
+# The default is 120 seconds (2 minutes)..»
+# 2.2) «Most of the modern PHP apps do not send any cache related headers (`Cache-Control`),
+# thus the default 120 seconds applies if you installed Varnish and haven’t configured much.»
+# 2.3) «Common approach to the matter of deciding on the correct value depends on your application.
+# But for the most part, the correct strategy is setting the default TTL to a really high value:
+# raise it to 2 weeks;
+# and make your application send PURGE request to Varnish when there’s need to invalidate an object in cache. »
+# https://www.getpagespeed.com/server-setup/varnish/varnish-default-ttl
+# 3) The value is in seconds.
+# 4) «1209600» means «2 weeks».
+p_t=1209600
 DAEMON_OPTS="\
     -a ${p_a} \
     -f ${p_f} \
     -S /etc/varnish/secret \
     -s malloc,256m \
     -T ${p_T} \
+    -t ${p_t} \
 "
 MEMLOCK=82000
 NFILES=131072
