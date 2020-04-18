@@ -33,3 +33,8 @@ deb https://dl.bintray.com/rabbitmq-erlang/debian buster erlang
 # 2020-04-08 Dmitry Fedyuk https://www.upwork.com/fl/mage2pro
 # "How did I install Elasticsearch 6.8 for Magento 2.3 to Debian 10?": https://df.tips/t/1008
 deb https://artifacts.elastic.co/packages/6.x/apt stable main
+
+# 2020-04-18 Dmitry Fedyuk https://www.upwork.com/fl/mage2pro
+# "How did I install Varnish 6.4 to Debian 10?": https://df.tips/t/1014
+deb https://packagecloud.io/varnishcache/varnish64/debian/ buster main
+deb-src https://packagecloud.io/varnishcache/varnish64/debian/ buster main
