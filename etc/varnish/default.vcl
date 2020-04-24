@@ -1,10 +1,20 @@
 # 2020-04-19 Dmitry Fedyuk https://www.upwork.com/fl/mage2pro
 vcl 4.1;
+# 2020-04-19 Dmitry Fedyuk https://www.upwork.com/fl/mage2pro
+# «Varnish has a concept of "backend" or "origin" servers.
+# A backend server is the server providing the content Varnish will accelerate.»
+# https://varnish-cache.org/docs/6.4/users-guide/vcl-backends.html
 backend default {
 	.host = "127.0.0.1";
 	.port = "8080";
 }
+# 2020-04-19 Dmitry Fedyuk https://www.upwork.com/fl/mage2pro
+# «Called after the response headers have been successfully retrieved from the backend.»
+# https://varnish-cache.org/docs/6.4/users-guide/vcl-built-in-subs.html#vcl-backend-response
 sub vcl_backend_response {}
+# 2020-04-19 Dmitry Fedyuk https://www.upwork.com/fl/mage2pro
+# «Called before any object except a `vcl_synth` result is delivered to the client.»
+# https://varnish-cache.org/docs/6.4/users-guide/vcl-built-in-subs.html#vcl-deliver
 sub vcl_deliver {}
 # 2020-04-19 Dmitry Fedyuk https://www.upwork.com/fl/mage2pro
 # «Called:
