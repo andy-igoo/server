@@ -72,8 +72,9 @@ p_t=1209600
 DAEMON_OPTS="\
     -a ${p_a} \
     -f ${p_f} \
-    -S /etc/varnish/secret \
+    -p http_resp_hdr_len=65536 \
     -s ${p_s} \
+    -S /etc/varnish/secret \
     -T ${p_T} \
     -t ${p_t} \
 "
