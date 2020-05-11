@@ -289,29 +289,40 @@ sub vcl_hit {
 		# Hit within TTL period
 		return (deliver);
 	}
-	if (std.healthy(req.backend_hint)) {
-		if (obj.ttl + 300s > 0s) {
-			# Hit after TTL expiration, but within grace period
-			set req.http.grace = "normal (healthy server)";
-			return (deliver);
-		}
-		else {
-			# 2020-05-11
-			# «Restart the transaction.
-			# Increases the `req.restarts` counter.
-			# If the number of restarts is higher than the `max_restarts` parameter,
-			# control is passed to `vcl_synth` as for `return(synth(503, "Too many restarts"))`
-			# https://varnish-cache.org/docs/6.1/users-guide/vcl-built-in-subs.html#vcl-synth
-			# For a restart, all modifications to `req` attributes are preserved
-			# except for `req.restarts` and `req.xid`, which need to change by design.»
-			# https://varnish-cache.org/docs/6.1/users-guide/vcl-actions.html#restart
-			return (restart);
-		}
-	}
-	else {
+	# 2020-05-11
+	# 1) `BOOL healthy(BACKEND be)`
+	# 	«Returns true if the backend is healthy.»
+	# https://varnish-cache.org/docs/6.1/reference/vmod_std.generated.html#bool-healthy-backend-be
+	# «req.backend_hint
+	# 	Set `bereq.backend` to this if we attempt to fetch.
+	# 	When set to a director, reading this variable returns an actual backend
+	#	if the director has resolved immediately, or the director otherwise.
+	#	When used in string context, returns the name of the director or backend, respectively.
+	# 		Type: BACKEND.
+	# 		Readable from: client.
+	# 		Writable from: client»
+	# https://varnish-cache.org/docs/6.1/reference/vcl.html#bereq
+	if (!std.healthy(req.backend_hint)) {
 		# server is not healthy, retrieve from cache
 		set req.http.grace = "unlimited (unhealthy server)";
 		return (deliver);
+	}
+	else if (0s < obj.ttl + 300s) {
+		# Hit after TTL expiration, but within grace period
+		set req.http.grace = "normal (healthy server)";
+		return (deliver);
+	}
+	else {
+		# 2020-05-11
+		# «Restart the transaction.
+		# Increases the `req.restarts` counter.
+		# If the number of restarts is higher than the `max_restarts` parameter,
+		# control is passed to `vcl_synth` as for `return(synth(503, "Too many restarts"))`
+		# https://varnish-cache.org/docs/6.1/users-guide/vcl-built-in-subs.html#vcl-synth
+		# For a restart, all modifications to `req` attributes are preserved
+		# except for `req.restarts` and `req.xid`, which need to change by design.»
+		# https://varnish-cache.org/docs/6.1/users-guide/vcl-actions.html#restart
+		return (restart);
 	}
 }
 # 2020-04-19 Dmitry Fedyuk https://www.upwork.com/fl/mage2pro
