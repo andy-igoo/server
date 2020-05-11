@@ -357,6 +357,32 @@ sub vcl_recv {
 			return (synth(400, "X-Magento-Tags-Pattern or X-Pool header required"));
 		}
 		if (req.http.X-Magento-Tags-Pattern) {
+			# 2020-05-12
+			# «`ban(STRING)`
+			# 	Invalidates all objects in cache that match the given expression with the ban mechanism.
+			#	The format of STRING is:
+			#		`<field> <operator> <arg> [&& <field> <oper> <arg> ...]`
+			# 	`<field>`:
+			#		`obj.http.*`: Any cache object header
+			#		`obj.status`: The cache object status
+			#		`req.http.*`: Any request header
+			# 		`req.url`: The request url
+			#	`<operator>`:
+			#		`==`: <field> and <arg> are equal strings (case sensitive)
+			#		`!=`: <field> and <arg> are unequal strings (case sensitive)
+			#		`~`: <field> matches the regular expression <arg>
+			#		`!~`: <field> does not match the regular expression <arg>
+			#	`<arg>`:
+			#		Either a literal string or a regular expression.
+			#		Note that <arg> does not use any of the string delimiters like " or {"..."}
+			#		used elsewhere in varnish.
+			#		To match against strings containing whitespace, regular expressions containing \s can be used.
+			# Expressions can be chained using the `and` operator `&&`.
+			# For `or` semantics, use several bans.
+			# The unset <field> is not equal to any string, such that, for a non-existing header,
+			# the operators `==` and `~` always evaluate as `false`,
+			# while the operators `!=` and `!~` always evaluate as `true`, respectively, for any value of <arg>. »
+			# https://varnish-cache.org/docs/6.1/reference/vcl.html#vcl-7-ban
 			ban("obj.http.X-Magento-Tags ~ " + req.http.X-Magento-Tags-Pattern);
 		}
 		if (req.http.X-Pool) {
