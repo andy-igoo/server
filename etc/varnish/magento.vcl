@@ -233,17 +233,15 @@ sub vcl_backend_response {
 # «Called before any object except a `vcl_synth` result is delivered to the client.»
 # https://varnish-cache.org/docs/6.1/users-guide/vcl-built-in-subs.html#vcl-deliver
 sub vcl_deliver {
-	if (resp.http.X-Magento-Debug) {
-		if (resp.http.x-varnish ~ " ") {
-			set resp.http.X-Magento-Cache-Debug = "HIT";
-			set resp.http.Grace = req.http.grace;
-		}
-		else {
-			set resp.http.X-Magento-Cache-Debug = "MISS";
-		}
+	if (!resp.http.X-Magento-Debug) {
+		unset resp.http.Age;
+	}
+	elseif (resp.http.x-varnish ~ " ") {
+		set resp.http.X-Magento-Cache-Debug = "HIT";
+		set resp.http.Grace = req.http.grace;
 	}
 	else {
-		unset resp.http.Age;
+		set resp.http.X-Magento-Cache-Debug = "MISS";
 	}
 	# Not letting browser to cache non-static files.
 	if (resp.http.Cache-Control !~ "private" && req.url !~ "^/(pub/)?(media|static)/") {
