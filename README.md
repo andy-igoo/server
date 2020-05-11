@@ -8,5 +8,6 @@ service mysql restart
 service nginx restart
 service php5.6-fpm restart                
 service php7.2-fpm restart
-service rabbitmq-server restart
+service rabbitmq-server restart  
+service varnish restart
 ```
