@@ -93,12 +93,12 @@ sub vcl_backend_response {
 	# 2020-05-11
 	# 1) «The response received from the backend, one cache misses, the store object is built from `beresp`.
 	# beresp
-	# 		The entire backend response HTTP data structure, useful as argument to VMOD functions.
+	# 	The entire backend response HTTP data structure, useful as argument to VMOD functions.
 	# 		Type: HTTP.
 	#		Readable from: `vcl_backend_response`, `vcl_backend_error`.»
 	# https://varnish-cache.org/docs/6.1/reference/vcl.html#beresp
 	# 2) «beresp.grace
-	# 		Set to a period to enable grace.
+	# 	Set to a period to enable grace.
 	#		Type: DURATION.
 	# 		Readable from: `vcl_backend_response`, `vcl_backend_error`.
 	# 		Writable from: `vcl_backend_response`, `vcl_backend_error`.»
@@ -106,7 +106,7 @@ sub vcl_backend_response {
 	set beresp.grace = 3d;
 	# 2020-05-11
 	# «beresp.http.*
-	# 		The HTTP headers returned from the server.
+	# 	The HTTP headers returned from the server.
 	# 		Type: HEADER.
 	# 		Readable from: `vcl_backend_response`, `vcl_backend_error`.
 	# 		Writable from: `vcl_backend_response`, `vcl_backend_error`.
@@ -115,7 +115,8 @@ sub vcl_backend_response {
 	if (beresp.http.content-type ~ "text") {
 		# 2020-05-11
 		# «beresp.do_esi
-		# 		Set it to true to parse the object for ESI directives. Will only be honored if req.esi is true.
+		# 	Set it to true to parse the object for ESI directives.
+		#	Will only be honored if req.esi is true.
 		# 		Type: BOOL.
 		#		Default: false.
 		# 		Readable from: `vcl_backend_response`, `vcl_backend_error`.
@@ -134,12 +135,21 @@ sub vcl_backend_response {
 	# 		The entire backend request HTTP data structure. Mostly useful as argument to VMODs.»
 	# https://varnish-cache.org/docs/6.1/reference/vcl.html#bereq
 	# 2) «bereq.url
-	# 		The requested URL, copied from req.url
+	# 	The requested URL, copied from req.url
 	# 		Type: STRING.
 	# 		Readable from: `vcl_pipe`, `backend`.
 	# 		Writable from: `vcl_pipe`, `backend`.»
 	# https://varnish-cache.org/docs/6.1/reference/vcl.html#bereq
 	if (bereq.url ~ "\.js$" || beresp.http.content-type ~ "text") {
+		# 2020-05-11
+		# «beresp.do_gzip
+		# 	Set to true to gzip the object while storing it.
+		#	If http_gzip_support is disabled, setting this variable has no effect.
+		# 		Type: BOOL.
+		#		Default: false.
+		# 		Readable from: `vcl_backend_response`, `vcl_backend_error`.
+		# 		Writable from: `vcl_backend_response`, `vcl_backend_error`.»
+		# https://varnish-cache.org/docs/6.1/reference/vcl.html#beresp
 		set beresp.do_gzip = true;
 	}
 	if (beresp.http.X-Magento-Debug) {
