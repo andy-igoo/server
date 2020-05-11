@@ -10,6 +10,10 @@ PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
 * * * * * www-data php /var/www/magento/update/cron.php >> /var/www/magento/var/log/update.cron.log
 * * * * * www-data php /var/www/magento/bin/magento setup:cron:run >> /var/www/magento/var/log/setup.cron.log
 
+* * * * * www-data php /var/www/veg.mage2.pro/magento/bin/magento cron:run 2>&1 | grep -v "Ran jobs by schedule" >> /var/www/veg.mage2.pro/magento/var/log/magento.cron.log
+* * * * * www-data php /var/www/veg.mage2.pro/magento/update/cron.php >> /var/www/veg.mage2.pro/magento/var/log/update.cron.log
+* * * * * www-data php /var/www/veg.mage2.pro/magento/bin/magento setup:cron:run >> /var/www/veg.mage2.pro/magento/var/log/setup.cron.log
+
 # 2020-04-04 Dmitry Fedyuk https://www.upwork.com/fl/mage2pro
 # Let's Encrypt certificates update: https://serverfault.com/a/790776
 @daily www-data sudo certbot renew && sudo service nginx restart
