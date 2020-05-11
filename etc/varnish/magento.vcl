@@ -376,17 +376,26 @@ sub vcl_recv {
 		# 2) `pipe`: «Switch to pipe mode. Control will eventually pass to vcl_pipe»:
 		# https://varnish-cache.org/docs/6.1/users-guide/vcl-built-in-subs.html#common-return-keywords
 		# 3) `vcl_pipe`:
-		# «Called upon entering pipe mode.
+		# «Called upon entering `pipe` mode.
 		# In this mode, the request is passed on to the backend,
 		# and any further data from both the client and backend is passed on unaltered
 		# until either end closes the connection.
 		# Basically, Varnish will degrade into a simple TCP proxy, shuffling bytes back and forth.
-		# For a connection in pipe mode, no other VCL subroutine will ever get called after vcl_pipe.»
+		# For a connection in `pipe` mode, no other VCL subroutine will ever get called after vcl_pipe.»
 		# https://varnish-cache.org/docs/6.1/users-guide/vcl-built-in-subs.html#vcl-pipe
 		return (pipe);
 	}
 	# We only deal with GET and HEAD by default
 	if (req.method != "GET" && req.method != "HEAD") {
+		# 2020-05-11
+		# 1) `pass`: «Switch to `pass` mode. Control will eventually pass to `vcl_pass`»:
+		# https://varnish-cache.org/docs/6.1/users-guide/vcl-built-in-subs.html#common-return-keywords
+		# 3) `vcl_pass`:
+		# «Called upon entering `pass` mode.
+		# In this mode, the request is passed on to the backend,
+		# and the backend's response is passed on to the client, but is not entered into the cache.
+		# Subsequent requests submitted over the same client connection are handled normally.»
+		# https://varnish-cache.org/docs/6.1/users-guide/vcl-built-in-subs.html#vcl-pipe
 		return (pass);
 	}
 	# Bypass shopping cart, checkout and search requests
