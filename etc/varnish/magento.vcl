@@ -18,7 +18,7 @@ acl purge {
 # 2020-04-19 Dmitry Fedyuk https://www.upwork.com/fl/mage2pro
 # «Varnish has a concept of "backend" or "origin" servers.
 # A backend server is the server providing the content Varnish will accelerate.»
-# https://varnish-cache.org/docs/6.4/users-guide/vcl-backends.html
+# https://varnish-cache.org/docs/6.1/users-guide/vcl-backends.html
 # 2020-05-11
 # «A backend declaration creates and initialises a named backend object.
 # A declaration start with the keyword backend followed by the name of the backend.
@@ -88,7 +88,7 @@ backend default {
 }
 # 2020-04-19 Dmitry Fedyuk https://www.upwork.com/fl/mage2pro
 # «Called after the response headers have been successfully retrieved from the backend.»
-# https://varnish-cache.org/docs/6.4/users-guide/vcl-built-in-subs.html#vcl-backend-response
+# https://varnish-cache.org/docs/6.1/users-guide/vcl-built-in-subs.html#vcl-backend-response
 sub vcl_backend_response {
 	# 2020-05-11
 	# 1) «The response received from the backend, one cache misses, the store object is built from `beresp`.
@@ -155,10 +155,57 @@ sub vcl_backend_response {
 	if (beresp.http.X-Magento-Debug) {
 		set beresp.http.X-Magento-Cache-Control = beresp.http.Cache-Control;
 	}
-	# cache only successfully responses and 404s
+	# 2020-05-11
+	# «beresp.status
+	# 	The HTTP status code returned by the server.
+	#	Status codes on the form XXYZZ can be set where XXYZZ is less than 65536 and Y is [1...9].
+	#	Only YZZ will be sent back to clients.
+	#	XX can be therefore be used to pass information around inside VCL,
+	#	for instance return(synth(22404)) from vcl_recv{} to vcl_synth{}
+	# 		Type: INT.
+	# 		Readable from: `vcl_backend_response`, `vcl_backend_error`.
+	# 		Writable from: `vcl_backend_response`, `vcl_backend_error`.»
+	# https://varnish-cache.org/docs/6.1/reference/vcl.html#beresp
 	if (beresp.status != 200 && beresp.status != 404) {
+		# 2020-05-11
+		# «beresp.ttl
+		# 	The object's remaining time to live, in seconds.
+		# 		Type: DURATION.
+		# 		Readable from: `vcl_backend_response`, `vcl_backend_error`.
+		# 		Writable from: `vcl_backend_response`, `vcl_backend_error`.»
+		# https://varnish-cache.org/docs/6.1/reference/vcl.html#beresp
 		set beresp.ttl = 0s;
+		# 2020-05-11
+		# «beresp.uncacheable
+		# 	The object's remaining time to live, in seconds.
+		# 		Type: DURATION.
+		# 		Readable from: `vcl_backend_response`, `vcl_backend_error`.
+		# 		Writable from: `vcl_backend_response`, `vcl_backend_error`.»
+		# https://varnish-cache.org/docs/6.1/reference/vcl.html#beresp
 		set beresp.uncacheable = true;
+		# 2020-05-11
+		# «The vcl_backend_response subroutine may terminate with calling return() with one of the following keywords:
+		# 	`fail`: https://varnish-cache.org/docs/6.1/users-guide/vcl-built-in-subs.html#fail
+		# 	`abandon`:
+		# 		Abandon the backend request.
+		#		Unless the backend request was a background fetch,
+		#		control is passed to `vcl_synth`
+		#		(https://varnish-cache.org/docs/6.1/users-guide/vcl-built-in-subs.html#vcl-synth)
+		#		on the client side with `resp.status` preset to 503.
+		# 	`deliver`:
+		# 		For a 304 response, create an updated cache object.
+		#		Otherwise, fetch the object body from the backend
+		#		and initiate delivery to any waiting client requests, possibly in parallel (streaming).
+		# 	`pass(duration)`
+		#		Mark the object as a hit-for-pass for the given duration.
+		#		Subsequent lookups hitting this object will be turned into passed transactions,
+		#		as if `vcl_recv` had returned pass.
+		# 	`retry`:
+		# 		Retry the backend transaction.
+		#		Increases the retries counter.
+		#		If the number of retries is higher than `max_retries`, control will be passed to `vcl_backend_error`.»
+		# https://varnish-cache.org/docs/6.1/users-guide/vcl-built-in-subs.html#vcl-backend-response
+		# https://varnish-cache.org/docs/6.1/users-guide/vcl-built-in-subs.html#common-return-keywords
 		return (deliver);
 	}
 	elsif (beresp.http.Cache-Control ~ "private") {
@@ -171,11 +218,11 @@ sub vcl_backend_response {
 		unset beresp.http.set-cookie;
 	}
    # If page is not cacheable then bypass varnish for 2 minutes as Hit-For-Pass
-   if (beresp.ttl <= 0s ||
-	   beresp.http.Surrogate-control ~ "no-store" ||
-	   (!beresp.http.Surrogate-Control &&
-	   beresp.http.Cache-Control ~ "no-cache|no-store") ||
-	   beresp.http.Vary == "*") {
+   if (beresp.ttl <= 0s
+		|| beresp.http.Surrogate-control ~ "no-store"
+		|| (!beresp.http.Surrogate-Control && beresp.http.Cache-Control ~ "no-cache|no-store")
+		|| beresp.http.Vary == "*"
+	) {
 		# Mark as Hit-For-Pass for the next 2 minutes
 		set beresp.ttl = 120s;
 		set beresp.uncacheable = true;
@@ -184,7 +231,7 @@ sub vcl_backend_response {
 }
 # 2020-04-19 Dmitry Fedyuk https://www.upwork.com/fl/mage2pro
 # «Called before any object except a `vcl_synth` result is delivered to the client.»
-# https://varnish-cache.org/docs/6.4/users-guide/vcl-built-in-subs.html#vcl-deliver
+# https://varnish-cache.org/docs/6.1/users-guide/vcl-built-in-subs.html#vcl-deliver
 sub vcl_deliver {
 	if (resp.http.X-Magento-Debug) {
 		if (resp.http.x-varnish ~ " ") {
@@ -215,7 +262,7 @@ sub vcl_deliver {
 # 2020-05-11
 # «Called after `vcl_recv` to create a hash value for the request.
 # This is used as a key to look up the object in Varnish.»
-# https://varnish-cache.org/docs/6.4/users-guide/vcl-built-in-subs.html#vcl-hash
+# https://varnish-cache.org/docs/6.1/users-guide/vcl-built-in-subs.html#vcl-hash
 sub vcl_hash {
 	if (req.http.cookie ~ "X-Magento-Vary=") {
 		hash_data(regsub(req.http.cookie, "^.*?X-Magento-Vary=([^;]+);*.*$", "\1"));
@@ -238,7 +285,7 @@ sub vcl_hash {
 # 2020-05-11
 # «Called when a cache lookup is successful.
 # The object being hit may be stale: It can have a zero or negative `ttl` with only `grace` or `keep` time left.»
-# https://varnish-cache.org/docs/6.4/users-guide/vcl-built-in-subs.html#vcl-hit
+# https://varnish-cache.org/docs/6.1/users-guide/vcl-built-in-subs.html#vcl-hit
 sub vcl_hit {
 	if (obj.ttl >= 0s) {
 		# Hit within TTL period
@@ -256,10 +303,10 @@ sub vcl_hit {
 			# Increases the `req.restarts` counter.
 			# If the number of restarts is higher than the `max_restarts` parameter,
 			# control is passed to `vcl_synth` as for `return(synth(503, "Too many restarts"))`
-			# https://varnish-cache.org/docs/6.4/users-guide/vcl-built-in-subs.html#vcl-synth
+			# https://varnish-cache.org/docs/6.1/users-guide/vcl-built-in-subs.html#vcl-synth
 			# For a restart, all modifications to `req` attributes are preserved
 			# except for `req.restarts` and `req.xid`, which need to change by design.»
-			# https://varnish-cache.org/docs/6.4/users-guide/vcl-actions.html#restart
+			# https://varnish-cache.org/docs/6.1/users-guide/vcl-actions.html#restart
 			return (restart);
 		}
 	}
@@ -280,7 +327,7 @@ sub vcl_hit {
 #	*) possibly modify it
 #	*) and decide on how to process it further.
 # A backend hint may be set as a default for the backend processing side.»
-# https://varnish-cache.org/docs/6.4/users-guide/vcl-built-in-subs.html#vcl-recv
+# https://varnish-cache.org/docs/6.1/users-guide/vcl-built-in-subs.html#vcl-recv
 sub vcl_recv {
 	if (req.method == "PURGE") {
 		if (client.ip !~ purge) {
