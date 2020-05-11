@@ -4,7 +4,17 @@
 # «Starting with Varnish 4.0, each VCL file must start by declaring its version with vcl <major>.<minor>; marker
 # at the top of the file.» https://varnish-cache.org/docs/6.1/reference/vcl.html#description
 vcl 4.0;
+# 2020-05-11
+# The `import` statement is used to load Varnish Modules (VMODs.)
+# https://varnish-cache.org/docs/6.1/reference/vcl.html#import-statement
 import std;
+# 2020-05-11
+# «An Access Control List (ACL) declaration creates and initialises a named access control list
+# which can later be used to match client addresses.»
+# https://varnish-cache.org/docs/6.1/reference/vcl.html#access-control-list-acl
+acl purge {
+	"localhost";
+}
 # 2020-04-19 Dmitry Fedyuk https://www.upwork.com/fl/mage2pro
 # «Varnish has a concept of "backend" or "origin" servers.
 # A backend server is the server providing the content Varnish will accelerate.»
@@ -75,13 +85,6 @@ backend default {
 		# https://varnish-cache.org/docs/6.1/reference/vcl.html#probes
 		.window = 10;
    }
-}
-# 2020-05-11
-# «An Access Control List (ACL) declaration creates and initialises a named access control list
-# which can later be used to match client addresses.»
-# https://varnish-cache.org/docs/6.1/reference/vcl.html#access-control-list-acl
-acl purge {
-	"localhost";
 }
 # 2020-04-19 Dmitry Fedyuk https://www.upwork.com/fl/mage2pro
 # «Called:
