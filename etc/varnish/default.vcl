@@ -5,17 +5,50 @@ import std;
 # «Varnish has a concept of "backend" or "origin" servers.
 # A backend server is the server providing the content Varnish will accelerate.»
 # https://varnish-cache.org/docs/6.4/users-guide/vcl-backends.html
-# 2020-05-10
-# «For SSL offloading, pass the following header in your proxy server or load balancer: 'X-Forwarded-Proto: https'».
+# 2020-05-11
+# «A backend declaration creates and initialises a named backend object.
+# A declaration start with the keyword backend followed by the name of the backend.
+# The actual declaration is in curly brackets, in a key/value fashion.»
+# https://varnish-cache.org/docs/6.1/reference/vcl.html#backend-definition
 backend default {
+	# 2020-05-11
+	# 1) «`first_byte_timeout` (default: 60s) limits how long the processing time of the backend may be.
+	# The first byte of the response must come down the TCP connection within this timeout.»
+	# https://info.varnish-software.com/blog/understanding-timeouts-varnish-cache
+	# 2) «Timeout for first byte.
+	# Default: `first_byte_timeout` parameter, see `varnishd`:
+	# https://varnish-cache.org/docs/6.1/reference/varnishd.html#varnishd-1»
+	# https://varnish-cache.org/docs/6.1/reference/vcl.html#backend-definition
+	# 3) https://book.varnish-software.com/4.0/chapters/Tuning.html#system-parameters
 	.first_byte_timeout = 600s;
+	# 2020-05-11
+	# «The host to be used.
+	# IP address or a hostname that resolves to a single IP address.
+	# This attribute is mandatory, unless .path is declared.»
+	# https://varnish-cache.org/docs/6.1/reference/vcl.html#backend-definition
 	.host = "localhost";
+	# 2020-05-11
+	# «The port on the backend that Varnish should connect to.
+	# Ignored if a Unix domain socket is declared in `.path`.»
+	# https://varnish-cache.org/docs/6.1/reference/vcl.html#backend-definition
 	.port = "8080";
+	# 2020-05-11
+	# 1) «Attach a probe to the backend.
+	# See Probes: https://varnish-cache.org/docs/6.1/reference/vcl.html#probes»
+	# https://varnish-cache.org/docs/6.1/reference/vcl.html#backend-definition
+	# 2) «Probes will query the backend for status on a regular basis and mark the backend as down it they fail.»
+	# https://varnish-cache.org/docs/6.1/reference/vcl.html#probes
 	.probe = {
 		.interval = 5s;
 		.threshold = 5;
 		.timeout = 2s;
+		# 2020-05-11
+		# «The URL to query. Defaults to `/`. Mutually exclusive with `.request`»
+		# https://varnish-cache.org/docs/6.1/reference/vcl.html#probes
 		.url = "/shop/health_check.php";
+		# 2020-05-11
+		# «How many of the latest polls we examine to determine backend health. Defaults to 8.»
+		# https://varnish-cache.org/docs/6.1/reference/vcl.html#probes
 		.window = 10;
    }
 }
