@@ -90,6 +90,19 @@ backend default {
 # «Called after the response headers have been successfully retrieved from the backend.»
 # https://varnish-cache.org/docs/6.4/users-guide/vcl-built-in-subs.html#vcl-backend-response
 sub vcl_backend_response {
+	# 2020-05-11
+	# 1) «The response received from the backend, one cache misses, the store object is built from `beresp`.
+	# beresp
+	# 		Type: HTTP
+	#		Readable from: `vcl_backend_response`, `vcl_backend_error`.
+	# The entire backend response HTTP data structure, useful as argument to VMOD functions.»
+	# https://varnish-cache.org/docs/6.1/reference/vcl.html#beresp
+	# 2) «beresp.grace
+	# Set to a period to enable grace.
+	# Type: DURATION
+	# Readable from: `vcl_backend_response`, `vcl_backend_error`.
+	# Writable from: `vcl_backend_response`, `vcl_backend_error`.»
+	# https://varnish-cache.org/docs/6.1/reference/vcl.html#beresp
 	set beresp.grace = 3d;
 	if (beresp.http.content-type ~ "text") {
 		set beresp.do_esi = true;
