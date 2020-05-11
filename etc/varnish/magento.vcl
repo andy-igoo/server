@@ -340,6 +340,12 @@ sub vcl_hit {
 sub vcl_recv {
 	if (req.method == "PURGE") {
 		if (client.ip !~ purge) {
+			# 2020-05-11
+			# «`synth(status code, reason)`
+			# 	Transition to `vcl_synth` with `resp.status` and `resp.reason`
+			#	being preset to the arguments of `synth()`.»
+			# https://varnish-cache.org/docs/6.1/users-guide/vcl-built-in-subs.html#common-return-keywords
+			# https://varnish-cache.org/docs/6.1/users-guide/vcl-built-in-subs.html#vcl-synth
 			return (synth(405, "Method not allowed"));
 		}
 		# To use the X-Pool header for purging varnish during automated deployments, make sure the X-Pool header
@@ -349,22 +355,35 @@ sub vcl_recv {
 			return (synth(400, "X-Magento-Tags-Pattern or X-Pool header required"));
 		}
 		if (req.http.X-Magento-Tags-Pattern) {
-		  ban("obj.http.X-Magento-Tags ~ " + req.http.X-Magento-Tags-Pattern);
+			ban("obj.http.X-Magento-Tags ~ " + req.http.X-Magento-Tags-Pattern);
 		}
 		if (req.http.X-Pool) {
-		  ban("obj.http.X-Pool ~ " + req.http.X-Pool);
+			ban("obj.http.X-Pool ~ " + req.http.X-Pool);
 		}
 		return (synth(200, "Purged"));
 	}
-	if (req.method != "GET" &&
-		req.method != "HEAD" &&
-		req.method != "PUT" &&
-		req.method != "POST" &&
-		req.method != "TRACE" &&
-		req.method != "OPTIONS" &&
-		req.method != "DELETE") {
-		  /* Non-RFC2616 or CONNECT which is weird. */
-		  return (pipe);
+	if (
+		"DELETE" != req.method
+		&& "GET" != req.method
+		&& "HEAD" != req.method
+		&& "OPTIONS" != req.method
+		&& "POST" != req.method
+		&& "PUT" != req.method
+		&& "TRACE" != req.method
+	) {
+		# 2020-05-11
+		# 1) Magento: «Non-RFC2616 or CONNECT which is weird».
+		# 2) `pipe`: «Switch to pipe mode. Control will eventually pass to vcl_pipe»:
+		# https://varnish-cache.org/docs/6.1/users-guide/vcl-built-in-subs.html#common-return-keywords
+		# 3) `vcl_pipe`:
+		# «Called upon entering pipe mode.
+		# In this mode, the request is passed on to the backend,
+		# and any further data from both the client and backend is passed on unaltered
+		# until either end closes the connection.
+		# Basically, Varnish will degrade into a simple TCP proxy, shuffling bytes back and forth.
+		# For a connection in pipe mode, no other VCL subroutine will ever get called after vcl_pipe.»
+		# https://varnish-cache.org/docs/6.1/users-guide/vcl-built-in-subs.html#vcl-pipe
+		return (pipe);
 	}
 	# We only deal with GET and HEAD by default
 	if (req.method != "GET" && req.method != "HEAD") {
