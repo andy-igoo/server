@@ -157,7 +157,7 @@ sub vcl_deliver {
 	unset resp.http.Via;
 	unset resp.http.Link;
 }
-# 2020-04-19 Dmitry Fedyuk https://www.upwork.com/fl/mage2pro
+# 2020-05-11
 # «Called after `vcl_recv` to create a hash value for the request.
 # This is used as a key to look up the object in Varnish.»
 # https://varnish-cache.org/docs/6.4/users-guide/vcl-built-in-subs.html#vcl-hash
@@ -180,6 +180,10 @@ sub vcl_hash {
 		call process_graphql_headers;
 	}
 }
+# 2020-05-11
+# «Called when a cache lookup is successful.
+# The object being hit may be stale: It can have a zero or negative `ttl` with only `grace` or `keep` time left.»
+# https://varnish-cache.org/docs/6.4/users-guide/vcl-built-in-subs.html#vcl-hit
 sub vcl_hit {
 	if (obj.ttl >= 0s) {
 		# Hit within TTL period
@@ -190,11 +194,21 @@ sub vcl_hit {
 			# Hit after TTL expiration, but within grace period
 			set req.http.grace = "normal (healthy server)";
 			return (deliver);
-		} else {
-			# Hit after TTL and grace expiration
+		}
+		else {
+			# 2020-05-11
+			# «Restart the transaction.
+			# Increases the `req.restarts` counter.
+			# If the number of restarts is higher than the `max_restarts` parameter,
+			# control is passed to `vcl_synth` as for `return(synth(503, "Too many restarts"))`
+			# https://varnish-cache.org/docs/6.4/users-guide/vcl-built-in-subs.html#vcl-synth
+			# For a restart, all modifications to `req` attributes are preserved
+			# except for `req.restarts` and `req.xid`, which need to change by design.»
+			# https://varnish-cache.org/docs/6.4/users-guide/vcl-actions.html#restart
 			return (restart);
 		}
-	} else {
+	}
+	else {
 		# server is not healthy, retrieve from cache
 		set req.http.grace = "unlimited (unhealthy server)";
 		return (deliver);
