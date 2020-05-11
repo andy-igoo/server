@@ -1,4 +1,9 @@
-# VCL version 5.0 is not supported so it should be 4.0 even though actually used Varnish version is 6
+# 2020-05-11
+# Magento: «VCL version 5.0 is not supported so it should be 4.0 even though actually used Varnish version is 6»
+# 2020-05-11
+# «Starting with Varnish 4.0,
+# each VCL file must start by declaring its version with vcl <major>.<minor>; marker at the top of the file.»
+# https://varnish-cache.org/docs/6.1/reference/vcl.html#description
 vcl 4.0;
 import std;
 # 2020-04-19 Dmitry Fedyuk https://www.upwork.com/fl/mage2pro
@@ -39,8 +44,28 @@ backend default {
 	# 2) «Probes will query the backend for status on a regular basis and mark the backend as down it they fail.»
 	# https://varnish-cache.org/docs/6.1/reference/vcl.html#probes
 	.probe = {
+		# 2020-05-11
+		# «The expected HTTP response code. Defaults to 200.»
+		# https://varnish-cache.org/docs/6.1/reference/vcl.html#probes
+		.expected_response = 200;
+		# 2020-05-11
+		# «How many of the polls in .window are considered good when Varnish starts.
+		# Defaults to the value of `.threshold` - 1.
+		# In this case, the backend starts as sick and requires one single poll to be considered healthy.»
+		# https://varnish-cache.org/docs/6.1/reference/vcl.html#probes
+		.initial = 4;
+		# 2020-05-11
+		# «How often the probe is run. Default is `5s`.»
+		# https://varnish-cache.org/docs/6.1/reference/vcl.html#probes
 		.interval = 5s;
+		# 2020-05-11
+		# How many of the polls in `.window` must have succeeded to consider the backend to be healthy.
+		# Defaults to `3`.
+		# https://varnish-cache.org/docs/6.1/reference/vcl.html#probes
 		.threshold = 5;
+		# 2020-05-11
+		# «The timeout for the probe. Default is `2s`.»
+		# https://varnish-cache.org/docs/6.1/reference/vcl.html#probes
 		.timeout = 2s;
 		# 2020-05-11
 		# «The URL to query. Defaults to `/`. Mutually exclusive with `.request`»
@@ -52,6 +77,10 @@ backend default {
 		.window = 10;
    }
 }
+# 2020-05-11
+# «An Access Control List (ACL) declaration creates and initialises a named access control list
+# which can later be used to match client addresses.»
+# https://varnish-cache.org/docs/6.1/reference/vcl.html#access-control-list-acl
 acl purge {
 	"localhost";
 }
